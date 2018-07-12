@@ -6,17 +6,21 @@ module peripheral (input reset,
                    input wr,
                    input [31:0] addr,
                    input [31:0] wdata,
-                   output [31:0] rdata,
-                   output [7:0]  led,
+                   output reg [31:0] rdata,
+                   output reg [7:0] led,
                    output [7:0] switch,
                    output reg [11:0] digi,
                    output irqout,
                    input PC_Uart_rxd,
                    output PC_Uart_txd);
 
-// Interrupt
 reg [31:0] TH, TL;
 reg [2:0] TCON;
+reg [7:0] tx_data;
+wire [7:0] rx_data;
+reg tx_enable, rx_enable, tx_flag, rx_flag;
+wire tx_status, rx_status;
+
 assign irqout = TCON[2];
 
 // Timer
@@ -45,17 +49,17 @@ always @(negedge reset or posedge clk) begin
 				32'h40000008: TCON <= wdata[2:0];		
 				32'h4000000C: led <= wdata[7:0];			
 				32'h40000014: digi <= wdata[11:0];
-                32'h40000018: begin UART_TXD <= wdata[7:0]; tx_enable <= 1'b1; end
+                32'h40000018: begin tx_data <= wdata[7:0]; tx_enable <= 1'b1; end
 				default: ;
 			endcase
 		end
+		
+		if (tx_enable == 1) tx_enable = 0;
 	end
 end
 
 // UART
-reg [31:0] UART_TXD, UART_RXD;
-reg tx_enable, rx_enable, tx_flag, rx_flag, tx_status;
-UART _UART(clk, UART_TXD, UART_RXD, tx_enable, rx_enable, tx_flag, rx_flag, tx_status, PC_Uart_rxd, PC_Uart_txd);
+uart _uart(clk, tx_data, rx_data, tx_enable, rx_enable, tx_status, rx_status, PC_Uart_rxd, PC_Uart_txd);
 
 // Read can be straight
 always @(*) begin
@@ -67,14 +71,17 @@ always @(*) begin
 			32'h4000000C: rdata <= {24'b0, led};			
 			32'h40000010: rdata <= {24'b0, switch};
 			32'h40000014: rdata <= {20'b0, digi};
-            32'h40000018: begin rdata <= {24'b0, UART_TXD}; tx_flag <= 1'b0; end
-            32'h4000001C: begin rdata <= {24'b0, UART_RXD}; rx_flag <= 1'b0; end
+            32'h40000018: begin rdata <= {24'b0, tx_data}; tx_flag <= 1'b0; end
+            32'h4000001C: begin rdata <= {24'b0, rx_data}; rx_flag <= 1'b0; end
             32'h40000020: rdata <= {27'b0, tx_status, rx_flag, tx_flag, rx_enable, tx_enable};
 			default: rdata <= 32'b0;
 		endcase
 	end
 	else
 		rdata <= 32'b0;
+	
+	if (tx_status == 1) tx_flag = 1;
+	if (rx_status == 1) rx_flag = 1;
 end
 
 endmodule

@@ -1,22 +1,25 @@
 module uart(
     input sysclk,
     input [7:0] tx_data,
-    output reg [7:0] rx_data,
+    output [7:0] rx_data,
     input tx_enable,
     input rx_enable,
-    output reg tx_flag,
-    output reg rx_flag,
-    output reg tx_status,
+    output tx_status,
+    output rx_status,
     input PC_Uart_rxd,
     output PC_Uart_txd);
 
     reg baudx16_clk;
     reg [9:0] baudx16_rate_count;
+    reg [9:0] tx_enable_hold_count;
+    reg tx_enable_hold;
     
     initial 
     begin
         baudx16_rate_count = 0;
         baudx16_clk = 0;
+        tx_enable_hold_count = 0;
+        tx_enable_hold = 0;
     end
 
     // x16 baud rate generator
@@ -26,17 +29,29 @@ module uart(
         baudx16_rate_count = baudx16_rate_count + 2;
         if (baudx16_rate_count == 650) baudx16_rate_count = 0;
     end
+    
+    always @(negedge sysclk)
+    begin
+        if (tx_enable)
+        begin
+            tx_enable_hold_count = 0;
+            tx_enable_hold = 1;
+        end
+        if (tx_enable_hold) tx_enable_hold_count = tx_enable_hold_count + 1;
+        if (tx_enable_hold_count == 650) tx_enable_hold = 0;
+    end
 
     // modules
-    rx _rx(PC_Uart_rxd, baudx16_clk, rx_flag, rx_data);
-    tx _tx(baudx16_clk, tx_data, tx_enable, tx_flag, tx_status, PC_Uart_txd);
+    rx _rx(PC_Uart_rxd, baudx16_clk, rx_enable, rx_status, rx_data);
+    tx _tx(baudx16_clk, tx_data, tx_enable_hold, tx_status, PC_Uart_txd);
     
 endmodule 
 
 module rx (
     input rx_in,
     input clk,
-    output reg rx_flag,
+    input rx_enable,
+    output reg rx_status,
     output reg [7:0] rx_data);
     
     reg sample_signal;
@@ -57,14 +72,14 @@ module rx (
         bit_count = 0;
         rx_data_tmp = 0;
         rx_data = 0;
-        rx_flag = 0;
+        rx_status = 0;
     end
         
     always @(posedge clk)
     begin
-        rx_flag = 0;
+        rx_status = 0;
         // check if the transmission begins
-        if (rx_in == 0 && last_sample == 1) start_rx = 1;
+        if (rx_in == 0 && last_sample == 1 && rx_enable) start_rx = 1;
         // begin sampling
         if (start_rx) clk_count = clk_count + 1;
         if (clk_count == 9) 
@@ -85,7 +100,7 @@ module rx (
             bit_count = 0;
             start_rx = 0;
             rx_data = rx_data_tmp;
-            rx_flag = 1;
+            rx_status = 1;
         end
         last_sample = rx_in;
     end
@@ -107,7 +122,6 @@ module tx(
     input clk,
     input [7:0] tx_data,
     input tx_enable,
-    output reg tx_flag,
     output reg tx_status,
     output reg tx_out);
     
@@ -127,9 +141,9 @@ module tx(
         bit_count = 0;
         tx_data_tmp = 0;
         tx_out = 1;
-        tx_status = 0;
+        tx_status = 1;
     end
-        
+
     always @(posedge clk)
     begin
         // begin sending
@@ -137,7 +151,7 @@ module tx(
         begin
             start_tx = 1;
             tx_data_tmp = tx_data;
-            tx_status = 1;
+            tx_status = 0;
         end
         // generate 9600 sending signal
         if (start_tx) clk_count = clk_count + 1;
@@ -157,8 +171,7 @@ module tx(
         begin
             bit_count = 0;
             start_tx = 0;
-            tx_status = 0;
-            tx_flag = 1;
+            tx_status = 1;
         end
     end
     
