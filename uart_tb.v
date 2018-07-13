@@ -29,8 +29,8 @@ module uart_tb(
       wr = 0;
       PC_Uart_rxd = 1;
 
-      #5 reset = ~reset;
-      #5 reset = ~reset;
+      #10 reset = ~reset;
+      #10 reset = ~reset;
 
       #10 begin
         wr = 1;
@@ -43,8 +43,24 @@ module uart_tb(
         addr = 32'h40000018; // write should enable UART sending
         wdata = {24'b0, 8'b00101101}; // [7:0] as send data
       end
+
+      #208333 PC_Uart_rxd = 0;
+      #208333 PC_Uart_rxd = 1;
+      #208333 PC_Uart_rxd = 0;
+      #208333 PC_Uart_rxd = 1;
+      #208333 PC_Uart_rxd = 1;
+      #208333 PC_Uart_rxd = 0;
+      #208333 PC_Uart_rxd = 0;
+      #208333 PC_Uart_rxd = 1;
+      #208333 PC_Uart_rxd = 0;
+      #208333 PC_Uart_rxd = 1;
+
+      #300000 begin
+        rd <= 1;
+        addr <= 32'h4000001C;
+      end
     end
 
-    always #5 clk = ~clk;
+    always #10 clk = ~clk;
     
 endmodule
