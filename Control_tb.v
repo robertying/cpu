@@ -1,3 +1,5 @@
+`timescale 1ns/1ps
+
 module Control_tb;
 
 reg [31:0] Instruct;
@@ -123,9 +125,9 @@ initial begin
 	#100	IRQ <=1;
 end
 
-Control Control_test(Instruct, IRQ, PC31,
-                    PCSrc, RegDst, RegWr, ALUSrc1, ALUSrc2,
-	                ALUFun, Sign, MemWr, MemRd, MemToReg, 
-	                ExtOp, LUOp);
+Control Control_test(.Instruct(Instruct), .IRQ(IRQ), .PC31(PC31),
+                    .PCSrc(PCSrc), .RegDst(RegDst), .RegWr(RegWr), .ALUSrc1(ALUSrc1),
+					.ALUSrc2(ALUSrc2), .ALUFun(ALUFun), .Sign(Sign), .MemWr(MemWr),
+					.MemRd(MemRd), .MemToReg(MemToReg), .ExtOp(ExtOp), .LUOp(LUOp));
 
 endmodule
