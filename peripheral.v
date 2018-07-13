@@ -28,7 +28,9 @@ always @(negedge reset or posedge clk) begin
 	if (~reset) begin
 		TH <= 32'b0;
 		TL <= 32'b0;
-		TCON <= 3'b0;	
+		TCON <= 3'b0;
+		tx_flag = 0;
+		rx_flag = 0;
 	end
 	else begin
         // Timer enabled
@@ -61,6 +63,9 @@ end
 // UART
 uart _uart(clk, tx_data, rx_data, tx_enable, rx_enable, tx_status, rx_status, PC_Uart_rxd, PC_Uart_txd);
 
+always @(posedge tx_status) tx_flag = 1;
+always @(posedge rx_status) rx_flag = 1;
+
 // Read can be straight
 always @(*) begin
 	if (rd) begin
@@ -79,9 +84,6 @@ always @(*) begin
 	end
 	else
 		rdata <= 32'b0;
-	
-	if (tx_status == 1) tx_flag = 1;
-	if (rx_status == 1) rx_flag = 1;
 end
 
 endmodule
