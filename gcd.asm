@@ -176,7 +176,7 @@ zero:
 	addi 	$t7, 	$0, 	0x003f
 	jr 	$ra
 one:
-	addi 	$t7, 	$0, 	0x0003
+	addi 	$t7, 	$0, 	0x0006
 	jr 	$ra
 two:
 	addi 	$t7, 	$0, 	0x005b
