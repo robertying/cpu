@@ -39,7 +39,7 @@ module ALU (A, B, ALUFun, Sign, OUT);
 		case ({A[31], B[31]})
 			2'b10: negative <= Sign;
 			2'b01: negative <= ~Sign;
-			default: negative <= OUT_00;
+			default: negative <= OUT_00[31];
 		endcase
 	
 	always @(*)
