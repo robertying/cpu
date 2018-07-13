@@ -1,8 +1,9 @@
-module Single_Cycle_CPU (clk, reset, led, digi, UART_RX, UART_TX);
+module Single_Cycle_CPU (clk, reset, switch, led, digi, UART_RX, UART_TX);
 input clk;
 input reset;
 input UART_RX;
 output [7:0] led;
+output [7:0] switch;
 output [11:0] digi;
 output UART_TX;
 
@@ -14,6 +15,7 @@ reg [31:0] PC_next;
 wire [31:0] PC_4;
 wire [31:0] ConBA;
 wire [31:0] Instruction;
+wire IRQ;
 
 wire [25:0] JT;
 wire [15:0] Imm16;
@@ -29,6 +31,8 @@ reg [31:0] DataBusC;
 wire [31:0] ALU_In_A;
 wire [31:0] ALU_In_B;
 wire [31:0] ALUOut;
+wire [31:0] DataMemOut;
+wire [31:0] PeripheralOut;
 wire [31:0] MemOut;
 wire [31:0] Imm32;
 
@@ -48,7 +52,7 @@ wire LUOp;
 assign PC_4 = PC +3'h4;
 assign ConBA = PC_4 + {Imm32[29:0], 2'b00};
 
-assign JT = {PC_4[31:28], Instruction[25:0], 2'b00};
+assign JT = Instruction[25:0];
 assign Imm16 = Instruction[15:0];
 assign Shamt = Instruction[10:6];
 assign Rd = Instruction[15:11];
@@ -58,6 +62,7 @@ assign Rs = Instruction[25:21];
 assign ALU_In_A = ALUSrc1 ? Shamt : DataBusA;
 assign ALU_In_B = ALUSrc2 ? (LUOp ? {Imm16, 16'b0} : Imm32) : DataBusB;
 assign Imm32 = (ExtOp && Imm16[15] ) ? {16'hffff, Imm16} : {16'h0000, Imm16};
+assign MemOut = ALUOut[30] ? PeripheralOut : DataMemOut;
 
 always @(*)
 	case (RegDst)
@@ -73,6 +78,7 @@ always @(*)
 		2'b00: DataBusC <= ALUOut;
 		2'b01: DataBusC <= MemOut;
 		2'b10: DataBusC <= PC_4;
+		2'b11: DataBusC <= PC;
 		default: DataBusC <= PC_4;
 	endcase
 
@@ -80,7 +86,7 @@ always @(*)
 	case (PCSrc)
 		3'b000: PC_next <= PC_4;
 		3'b001: PC_next <= ALUOut[0] ? ConBA : PC_4;
-		3'b010: PC_next <= JT;
+		3'b010: PC_next <= {PC_4[31:28], JT, 2'b00};
 		3'b011: PC_next <= DataBusA;
 		3'b100: PC_next <= ILLOP;
 		3'b101: PC_next <= XADR;
@@ -102,6 +108,6 @@ Control control(.Instruct(Instruction), .IRQ(IRQ), .PC31(PC[31]),
 RegFile regfile(.reset(reset), .clk(clk), .addr1(Rs), .data1(DataBusA),
 				.addr2(Rt), .data2(DataBusB), .wr(RegWr), .addr3(Rc), .data3(DataBusC));
 ALU alu(.A(ALU_In_A), .B(ALU_In_B), .ALUFun(ALUFun), .Sign(Sign), .OUT(ALUOut));
-DataMem datamem(.reset(reset), .clk(clk), .rd(MemRd), .wr(MemWr), .addr(ALUOut), .wdata(DataBusB), .rdata(MemOut));
-//Peripheral peripheral(.reset(reset), .clk(clk), .rd(), .wr(), .addr(), .wdata(), .rdata(), .led(led), .switch(), .digi(digi), .irqout());
+DataMem datamem(.reset(reset), .clk(clk), .rd(MemRd), .wr(MemWr), .addr(ALUOut), .wdata(DataBusB), .rdata(DataMemOut));
+Peripheral peripheral(.reset(reset), .clk(clk), .rd(MemRd), .wr(MemWr), .addr(ALUOut), .wdata(DataBusB), .rdata(PeripheralOut), .led(led), .switch(switch), .digi(digi), .irqout(IRQ), .PC_Uart_rxd(UART_RX), .PC_Uart_txd(UART_TX));
 endmodule
