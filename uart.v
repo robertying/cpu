@@ -79,7 +79,7 @@ module rx (
     begin
         rx_status = 0;
         // check if the transmission begins
-        if (rx_in == 0 && last_sample == 1 && rx_enable) start_rx = 1;
+        if (rx_in == 0 && last_sample == 1) start_rx = 1;
         // begin sampling
         if (start_rx) clk_count = clk_count + 1;
         if (clk_count == 9) 
