@@ -63,7 +63,9 @@ module Control (Instruct, IRQ, PC31,
 			RegWr <= 1;
 	// MemToReg
 	always @(*)
-		if(IRQ_valid || Undefine || OpCode == 6'h00 && Funct == 6'h09 || OpCode == 6'h03)
+		if(IRQ_valid)
+			MemToReg <= 2'd3;
+		else if(Undefine || OpCode == 6'h00 && Funct == 6'h09 || OpCode == 6'h03)
 			MemToReg <= 2'd2;
 		else if(OpCode == 6'h23)
 			MemToReg <= 2'd1;
