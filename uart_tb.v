@@ -1,3 +1,5 @@
+`timescale 1ns/1ps
+
 module uart_tb(
 );
 
@@ -8,7 +10,7 @@ module uart_tb(
     wire [31:0] rdata;
     wire [11:0] digi;
 
-    peripheral _peripheral(reset,
+    Peripheral _peripheral(reset,
                             clk,
                             rd,
                             wr,

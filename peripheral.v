@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module peripheral (input reset,
+module Peripheral (input reset,
                    input clk,
                    input rd,
                    input wr,
@@ -29,8 +29,11 @@ always @(negedge reset or posedge clk) begin
 		TH <= 32'b0;
 		TL <= 32'b0;
 		TCON <= 3'b0;
+		digi <= 12'b0;
 		tx_flag = 0;
 		rx_flag = 0;
+		tx_enable = 0;
+		rx_enable = 1;
 	end
 	else begin
         // Timer enabled
