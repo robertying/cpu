@@ -11,7 +11,7 @@ assign data=(addr < 4 * ROM_SIZE) ? ROMDATA[addr[30:2]] : 32'b0;
 
 integer i;
 initial begin
-        //0x0  	j	main
+    //0x0  	j	main
     ROMDATA[0] <= 32'h08000003;
     //0x4  	j	interrupt
     ROMDATA[1] <= 32'h08000028;
@@ -27,39 +27,39 @@ initial begin
     ROMDATA[6] <= 32'h22310008;
     //0x1c  timer:	sw	    $0,	    8($s0)
     ROMDATA[7] <= 32'hae000008;
-    //0x20  	addi	$t0,	$0,	-1000
-    ROMDATA[8] <= 32'h2008fc18;
+    //0x20  	addi 	$t0, 	$0,     -30000
+    ROMDATA[8] <= 32'h20088ad0;
     //0x24  	sw	    $t0,	0($s0)
     ROMDATA[9] <= 32'hae080000;
-    //0x28  	addi	$t0,	$0,	-1
+    //0x28  	addi	$t0,	$0,	    -1
     ROMDATA[10] <= 32'h2008ffff;
     //0x2c  	sw	    $t0,	4($s0)
     ROMDATA[11] <= 32'hae080004;
-    //0x30  	addi	$t0,	$0,	3
+    //0x30  	addi	$t0,	$0,     3
     ROMDATA[12] <= 32'h20080003;
     //0x34  	sw	    $t0,	8($s0)
     ROMDATA[13] <= 32'hae080008;
-    //0x38  	add	    $v0,	$0,	$0
+    //0x38  	add	    $v0,	$0,	    $0
     ROMDATA[14] <= 32'h00001020;
-    //0x3c  UART_receiver1:	lw		$t0,	32($s0)
+    //0x3c  UART_receiver1:	lw	    $t0,	32($s0)
     ROMDATA[15] <= 32'h8e080020;
-    //0x40  	and		$t1,	$t0,	$s1
+    //0x40  	and	    $t1,	$t0,	$s1
     ROMDATA[16] <= 32'h01114824;
-    //0x44  	beq		$t1,	$0,		UART_receiver1
+    //0x44  	beq	    $t1,	$0,	    UART_receiver1
     ROMDATA[17] <= 32'h1120fffd;
-    //0x48  	lw		$a0,	28($s0)
+    //0x48  	lw	    $a0,	28($s0)
     ROMDATA[18] <= 32'h8e04001c;
-    //0x4c  	add		$a2,	$0,		$a0
+    //0x4c  	add	    $a2,	$0,	$a0
     ROMDATA[19] <= 32'h00043020;
-    //0x50  UART_receiver2:	lw 		$t0,	32($s0)
+    //0x50  UART_receiver2:	lw 	    $t0,	32($s0)
     ROMDATA[20] <= 32'h8e080020;
-    //0x54  	and		$t1,	$t0,	$s1
+    //0x54  	and	    $t1,	$t0,	$s1
     ROMDATA[21] <= 32'h01114824;
-    //0x58  	beq		$t1,	$0,		UART_receiver2
+    //0x58  	beq	    $t1,	$0,	    UART_receiver2
     ROMDATA[22] <= 32'h1120fffd;
-    //0x5c  	lw		$a1,	28($s0)  
+    //0x5c  	lw	    $a1,	28($s0)
     ROMDATA[23] <= 32'h8e05001c;
-    //0x60  	add		$a3,	$0,		$a1
+    //0x60  	add		$a3, 	$0, 	$a1
     ROMDATA[24] <= 32'h00053820;
     //0x64  	j		judge
     ROMDATA[25] <= 32'h08000021;
