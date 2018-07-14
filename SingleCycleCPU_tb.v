@@ -20,28 +20,28 @@ initial begin
 	#10 reset <= 1;
 
 	// first number = 84
-	#208333 UART_RX = 0;
-    #208333 UART_RX = 0;
-    #208333 UART_RX = 0;
-    #208333 UART_RX = 1;
-    #208333 UART_RX = 0;
-    #208333 UART_RX = 1;
-    #208333 UART_RX = 0;
-    #208333 UART_RX = 1;
-    #208333 UART_RX = 0;
-    #208333 UART_RX = 1;
+	#104167 UART_RX = 0;
+    #104167 UART_RX = 0;
+    #104167 UART_RX = 0;
+    #104167 UART_RX = 1;
+    #104167 UART_RX = 0;
+    #104167 UART_RX = 1;
+    #104167 UART_RX = 0;
+    #104167 UART_RX = 1;
+    #104167 UART_RX = 0;
+    #104167 UART_RX = 1;
 
 	// second number = 12
-	#416666 UART_RX = 0;
-    #208333 UART_RX = 0;
-    #208333 UART_RX = 0;
-    #208333 UART_RX = 1;
-    #208333 UART_RX = 1;
-    #208333 UART_RX = 0;
-    #208333 UART_RX = 0;
-    #208333 UART_RX = 0;
-    #208333 UART_RX = 0;
-    #208333 UART_RX = 1;
+	#104167 UART_RX = 0;
+    #104167 UART_RX = 0;
+    #104167 UART_RX = 0;
+    #104167 UART_RX = 1;
+    #104167 UART_RX = 1;
+    #104167 UART_RX = 0;
+    #104167 UART_RX = 0;
+    #104167 UART_RX = 0;
+    #104167 UART_RX = 0;
+    #104167 UART_RX = 1;
 end
 
 always #10 clk = ~clk;
