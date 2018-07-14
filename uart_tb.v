@@ -46,18 +46,34 @@ module uart_tb(
         wdata = {24'b0, 8'b00101101}; // [7:0] as send data
       end
 
-      #208333 PC_Uart_rxd = 0;
-      #208333 PC_Uart_rxd = 1;
-      #208333 PC_Uart_rxd = 0;
-      #208333 PC_Uart_rxd = 1;
-      #208333 PC_Uart_rxd = 1;
-      #208333 PC_Uart_rxd = 0;
-      #208333 PC_Uart_rxd = 0;
-      #208333 PC_Uart_rxd = 1;
-      #208333 PC_Uart_rxd = 0;
-      #208333 PC_Uart_rxd = 1;
+      #104167 PC_Uart_rxd = 0;
+      #104167 PC_Uart_rxd = 1;
+      #104167 PC_Uart_rxd = 1;
+      #104167 PC_Uart_rxd = 0;
+      #104167 PC_Uart_rxd = 0;
+      #104167 PC_Uart_rxd = 0;
+      #104167 PC_Uart_rxd = 1;
+      #104167 PC_Uart_rxd = 0;
+      #104167 PC_Uart_rxd = 0;
+      #104167 PC_Uart_rxd = 1;
 
-      #300000 begin
+      #200000 begin
+        rd <= 1;
+        addr <= 32'h4000001C;
+      end
+      
+      #104167 PC_Uart_rxd = 0;
+      #104167 PC_Uart_rxd = 1;
+      #104167 PC_Uart_rxd = 0;
+      #104167 PC_Uart_rxd = 0;
+      #104167 PC_Uart_rxd = 0;
+      #104167 PC_Uart_rxd = 0;
+      #104167 PC_Uart_rxd = 0;
+      #104167 PC_Uart_rxd = 1;
+      #104167 PC_Uart_rxd = 0;
+      #104167 PC_Uart_rxd = 1;
+
+      #200000 begin
         rd <= 1;
         addr <= 32'h4000001C;
       end
