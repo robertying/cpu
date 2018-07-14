@@ -47,7 +47,7 @@ end
 always #10 clk = ~clk;
 
 SingleCycleCPU SingleCycleCPU_test(.clk(clk), .reset(reset),
-									   .led(led),.switch(switch), .digi(digi),
-									   .UART_RX(UART_RX), .UART_TX(UART_TX));
+								   .led(led),.switch(switch), .digi(digi),
+								   .UART_RX(UART_RX), .UART_TX(UART_TX));
 
 endmodule

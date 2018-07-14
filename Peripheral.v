@@ -12,7 +12,8 @@ module Peripheral (input reset,
                    output reg [11:0] digi,
                    output irqout,
                    input PC_Uart_rxd,
-                   output PC_Uart_txd);
+                   output PC_Uart_txd
+				   );
 
 reg [31:0] TH, TL;
 reg [2:0] TCON;
@@ -20,6 +21,7 @@ reg [7:0] tx_data;
 wire [7:0] rx_data;
 reg tx_enable, rx_enable, tx_flag, rx_flag;
 wire tx_status, rx_status;
+reg cnt;
 
 assign irqout = TCON[2];
 
@@ -30,10 +32,11 @@ always @(negedge reset or posedge clk) begin
 		TL <= 32'b0;
 		TCON <= 3'b0;
 		digi <= 12'b0;
-		tx_flag = 0;
-		rx_flag = 0;
-		tx_enable = 0;
-		rx_enable = 1;
+		tx_flag <= 0;
+		rx_flag <= 0;
+		tx_enable <= 0;
+		rx_enable <= 1;
+		cnt <= 0;
 	end
 	else begin
         // Timer enabled
@@ -58,7 +61,22 @@ always @(negedge reset or posedge clk) begin
 				default: ;
 			endcase
 		end
+
+		if(~rx_status)
+			cnt = 0;
+		else if (rx_status && ~cnt) begin
+			rx_flag = 1;
+			cnt = 1;
+		end
 		
+		if(tx_status)
+			tx_flag <= 1;
+
+		if(rd && (addr==32'h4000001C))
+			rx_flag <= 1'b0;
+		else if(rd && (addr==32'h4000001C))
+			tx_flag <= 1'b0;
+
 		if (tx_enable == 1) tx_enable = 0;
 	end
 end
@@ -66,11 +84,9 @@ end
 // UART
 uart _uart(clk, tx_data, rx_data, tx_enable, rx_enable, tx_status, rx_status, PC_Uart_rxd, PC_Uart_txd);
 
-always @(posedge tx_status) tx_flag = 1;
-always @(posedge rx_status) rx_flag = 1;
-
 // Read can be straight
 always @(*) begin
+
 	if (rd) begin
 		case (addr)
 			32'h40000000: rdata <= TH;			
@@ -79,8 +95,8 @@ always @(*) begin
 			32'h4000000C: rdata <= {24'b0, led};			
 			32'h40000010: rdata <= {24'b0, switch};
 			32'h40000014: rdata <= {20'b0, digi};
-            32'h40000018: begin rdata <= {24'b0, tx_data}; tx_flag <= 1'b0; end
-            32'h4000001C: begin rdata <= {24'b0, rx_data}; rx_flag <= 1'b0; end
+            32'h40000018: begin rdata <= {24'b0, tx_data}; end
+            32'h4000001C: begin rdata <= {24'b0, rx_data}; end
             32'h40000020: rdata <= {27'b0, tx_status, rx_flag, tx_flag, rx_enable, tx_enable};
 			default: rdata <= 32'b0;
 		endcase
