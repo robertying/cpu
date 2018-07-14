@@ -14,8 +14,8 @@ main:
 timer:
 	# 0x4000_0008 = 0
 	sw	$0,	8($s0)
-	# 0x4000_0000 = -1000
-	addi	$t0,	$0,	-1000
+	# 0x4000_0000 = 0xffff_8ad0
+	addi	$t0,	$0,	-30000
 	sw	$t0,	0($s0)
 	# 0x4000_0004 = -1
 	addi	$t0,	$0,	-1
@@ -35,6 +35,8 @@ UART_receiver1:
 	beq	$t1,	$0,	UART_receiver1
 	# $a0 = 0x4000_001c = UART_RXD
 	lw	$a0,	28($s0)
+	
+	add	$a2,	$0,	$a0
 
 #=======GET SECOND NUMBER=======#  
 UART_receiver2:
@@ -46,7 +48,6 @@ UART_receiver2:
 	# $a1 = 0x4000_001c = UART_RXD
 	lw	$a1,	28($s0) 
 		
-	add	$a2,	$0,	$a0
 	add	$a3,	$0,	$a1
 	j	judge
 	
