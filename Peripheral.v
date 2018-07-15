@@ -66,17 +66,16 @@ always @(negedge reset or posedge clk) begin
 
 		if(~rx_status)
 			cnt = 0;
-		else if (rx_status && ~cnt) begin
+		if (rx_status && ~cnt) begin
 			rx_flag = 1;
 			cnt = 1;
 		end
-		
 		if(tx_status)
 			tx_flag <= 1;
 
 		if(rd && (addr==32'h4000001C))
 			rx_flag <= 1'b0;
-		else if(rd && (addr==32'h4000001C))
+		if(rd && (addr==32'h4000001C))
 			tx_flag <= 1'b0;
 
 		if (tx_enable == 1) tx_enable = 0;
