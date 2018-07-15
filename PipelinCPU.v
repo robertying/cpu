@@ -1,8 +1,9 @@
-module Pipeline_CPU(clk, reset, led, digi, UART_RX, UART_TX);
+module Pipeline_CPU(clk, reset, led, switch, digi, UART_RX, UART_TX);
 input clk;
 input reset;
 input UART_RX;
 output [7:0] led;
+output [7:0] switch;
 output [11:0] digi;
 output UART_TX;
 
