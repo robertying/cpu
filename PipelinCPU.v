@@ -1,6 +1,6 @@
-module PipelineCPU(clk, reset, led, switch, digi, UART_RX, UART_TX);
-input clk;
+module PipelineCPU(reset, sysclk, led, switch, digi, UART_RX, UART_TX);
 input reset;
+input sysclk;
 input UART_RX;
 output [7:0] led;
 output [7:0] switch;
@@ -9,6 +9,9 @@ output UART_TX;
 
 parameter ILLOP = 32'h8000_0004;
 parameter XADR = 32'h8000_0008;
+
+wire clk;
+FreqDiv freqDiv(.sysclk(sysclk), .clk(clk));
 
 reg [31:0] PC;
 wire [31:0] PC_plus_4;

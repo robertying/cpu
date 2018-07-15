@@ -25,8 +25,8 @@ end
 wire [31:0] PC_plus_4;
 assign PC_plus_4 = PC + 32'h4;
 
-wire [31:0] Instruction;
-ROM instructionMem(.addr(PC[30:0]), .data(Instruction));
+wire [31:0] Instruct;
+ROM instructionMem(.addr(PC[30:0]), .data(Instruct));
 
 wire [25:0] JT;
 wire [15:0] Imm16;
@@ -34,12 +34,12 @@ wire [4:0] Shamt;
 wire [4:0] Rd;
 wire [4:0] Rt;
 wire [4:0] Rs;
-assign JT = Instruction[25:0];
-assign Imm16 = Instruction[15:0];
-assign Shamt = Instruction[10:6];
-assign Rd = Instruction[15:11];
-assign Rt = Instruction[20:16];
-assign Rs = Instruction[25:21];
+assign JT = Instruct[25:0];
+assign Imm16 = Instruct[15:0];
+assign Shamt = Instruct[10:6];
+assign Rd = Instruct[15:11];
+assign Rt = Instruct[20:16];
+assign Rs = Instruct[25:21];
 
 wire IRQ;
 wire [2:0] PCSrc;
@@ -54,7 +54,7 @@ wire MemRd;
 wire [1:0] MemToReg;
 wire ExtOp;
 wire LUOp;
-Control control(.Instruct(Instruction), .IRQ(IRQ), .PC31(PC[31]),
+Control control(.Instruct(Instruct), .IRQ(IRQ), .PC31(PC[31]),
 				.PCSrc(PCSrc), .RegDst(RegDst), .RegWr(RegWr), .ALUSrc1(ALUSrc1),
 				.ALUSrc2(ALUSrc2), .ALUFun(ALUFun), .Sign(Sign), .MemWr(MemWr),
 				.MemRd(MemRd), .MemToReg(MemToReg), .ExtOp(ExtOp), .LUOp(LUOp));
