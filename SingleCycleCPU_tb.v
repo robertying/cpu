@@ -2,7 +2,7 @@
 
 module SingleCycleCPU_tb;
 
-reg clk;
+reg sysclk;
 reg reset;
 reg UART_RX;
 
@@ -12,7 +12,7 @@ wire [11:0] digi;
 wire UART_TX;
 
 initial begin
-	clk <= 0;
+	sysclk <= 0;
 	reset <= 1;
 	UART_RX <= 1;
 
@@ -44,9 +44,9 @@ initial begin
     #104167 UART_RX = 1;
 end
 
-always #10 clk = ~clk;
+always #5 sysclk = ~sysclk;
 
-SingleCycleCPU SingleCycleCPU_test(.clk(clk), .reset(reset),
+SingleCycleCPU SingleCycleCPU_test(.reset(reset), .sysclk(sysclk),
 								   .led(led), .switch(switch), .digi(digi),
 								   .UART_RX(UART_RX), .UART_TX(UART_TX));
 

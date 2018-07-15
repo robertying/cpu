@@ -97,8 +97,8 @@ always @(*) begin
 			32'h4000000C: rdata <= {24'b0, led};			
 			32'h40000010: rdata <= {24'b0, switch};
 			32'h40000014: rdata <= {20'b0, digi};
-            32'h40000018: begin rdata <= {24'b0, tx_data}; end
-            32'h4000001C: begin rdata <= {24'b0, rx_data}; end
+            32'h40000018: rdata <= {24'b0, tx_data};
+            32'h4000001C: rdata <= {24'b0, rx_data};
             32'h40000020: rdata <= {27'b0, tx_status, rx_flag, tx_flag, rx_enable, tx_enable};
 			default: rdata <= 32'b0;
 		endcase
