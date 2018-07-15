@@ -26,7 +26,7 @@ wire [31:0] PC_plus_4;
 assign PC_plus_4 = PC + 32'h4;
 
 wire [31:0] Instruction;
-ROM instruction_memory(.addr(PC[30:0]), .data(Instruction));
+ROM instructionMem(.addr(PC[30:0]), .data(Instruction));
 
 wire [25:0] JT;
 wire [15:0] Imm16;
@@ -68,7 +68,7 @@ assign Rw = (RegDst == 2'b00) ? Rd :
 wire [31:0] DataBusA;
 wire [31:0] DataBusB;
 wire [31:0] DataBusC;
-RegFile regfile(.reset(reset), .clk(clk), .addr1(Rs), .data1(DataBusA),.addr2(Rt),
+RegFile regFile(.reset(reset), .clk(clk), .addr1(Rs), .data1(DataBusA),.addr2(Rt),
 				.data2(DataBusB), .wr(RegWr), .addr3(Rw), .data3(DataBusC));
 
 wire [31:0] Imm32;
@@ -82,7 +82,7 @@ wire [31:0] ALUOut;
 ALU alu(.A(ALU_In_A), .B(ALU_In_B), .ALUFun(ALUFun), .Sign(Sign), .OUT(ALUOut));
 
 wire [31:0] DataMemOut;
-DataMem datamem(.reset(reset), .clk(clk), .rd(MemRd), .wr(MemWr),
+DataMem dataMem(.reset(reset), .clk(clk), .rd(MemRd), .wr(MemWr),
 				.addr(ALUOut), .wdata(DataBusB), .rdata(DataMemOut));
 
 wire [31:0] PeripheralOut;
