@@ -10,6 +10,6 @@ output UART_TX;
 wire clk;
 
 FreqDiv freqDiv(.sysclk(sysclk), .clk(clk));
-SingleCycleCPU CPU(.clk(clk), .reset(reset), .switch(switch), .led(led), .digi(digi), .UART_RX(UART_RX), .UART_TX(UART_TX));
+SingleCycleCPU CPU(.sysclk(sysclk), .clk(clk), .reset(reset), .switch(switch), .led(led), .digi(digi), .UART_RX(UART_RX), .UART_TX(UART_TX));
 
 endmodule

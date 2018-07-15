@@ -27,7 +27,7 @@ module uart(
     begin
         if (baudx16_rate_count == 0)  baudx16_clk = ~baudx16_clk;
         baudx16_rate_count = baudx16_rate_count + 2;
-        if (baudx16_rate_count == 326) baudx16_rate_count = 0;
+        if (baudx16_rate_count == 650) baudx16_rate_count = 0;
     end
     
     always @(negedge sysclk)
@@ -38,7 +38,7 @@ module uart(
             tx_enable_hold = 1;
         end
         if (tx_enable_hold) tx_enable_hold_count = tx_enable_hold_count + 1;
-        if (tx_enable_hold_count == 326) tx_enable_hold = 0;
+        if (tx_enable_hold_count == 650) tx_enable_hold = 0;
     end
 
     // modules

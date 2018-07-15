@@ -1,4 +1,5 @@
-module SingleCycleCPU (clk, reset, switch, led, digi, UART_RX, UART_TX);
+module SingleCycleCPU (sysclk, clk, reset, switch, led, digi, UART_RX, UART_TX);
+input sysclk;
 input clk;
 input reset;
 input UART_RX;
@@ -109,5 +110,5 @@ RegFile regfile(.reset(reset), .clk(clk), .addr1(Rs), .data1(DataBusA),
 				.addr2(Rt), .data2(DataBusB), .wr(RegWr), .addr3(Rc), .data3(DataBusC));
 ALU alu(.A(ALU_In_A), .B(ALU_In_B), .ALUFun(ALUFun), .Sign(Sign), .OUT(ALUOut));
 DataMem datamem(.reset(reset), .clk(clk), .rd(MemRd), .wr(MemWr), .addr(ALUOut), .wdata(DataBusB), .rdata(DataMemOut));
-Peripheral peripheral(.reset(reset), .clk(clk), .rd(MemRd), .wr(MemWr), .addr(ALUOut), .wdata(DataBusB), .rdata(PeripheralOut), .led(led), .switch(switch), .digi(digi), .irqout(IRQ), .PC_Uart_rxd(UART_RX), .PC_Uart_txd(UART_TX));
+Peripheral peripheral(.sysclk(sysclk), .reset(reset), .clk(clk), .rd(MemRd), .wr(MemWr), .addr(ALUOut), .wdata(DataBusB), .rdata(PeripheralOut), .led(led), .switch(switch), .digi(digi), .irqout(IRQ), .PC_Uart_rxd(UART_RX), .PC_Uart_txd(UART_TX));
 endmodule

@@ -1,6 +1,7 @@
 `timescale 1ns/1ps
 
-module Peripheral (input reset,
+module Peripheral (input sysclk,
+                   input reset,
                    input clk,
                    input rd,
                    input wr,
@@ -32,6 +33,7 @@ always @(negedge reset or posedge clk) begin
 		TL <= 32'b0;
 		TCON <= 3'b0;
 		digi <= 12'b0;
+		led <= 8'b0;
 		tx_flag <= 0;
 		rx_flag <= 0;
 		tx_enable <= 0;
@@ -82,7 +84,7 @@ always @(negedge reset or posedge clk) begin
 end
 
 // UART
-uart _uart(clk, tx_data, rx_data, tx_enable, rx_enable, tx_status, rx_status, PC_Uart_rxd, PC_Uart_txd);
+uart _uart(sysclk, tx_data, rx_data, tx_enable, rx_enable, tx_status, rx_status, PC_Uart_rxd, PC_Uart_txd);
 
 // Read can be straight
 always @(*) begin
