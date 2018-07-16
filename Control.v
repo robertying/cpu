@@ -57,7 +57,7 @@ module Control (Instruct, IRQ, PC31,
 	always @(*)
 		if(IRQ_valid || Undefine)
 			RegWr <= 1;
-		else if(OpCode == 6'h2b || OpCode == 6'h00 && Funct == 6'h08 || OpCode >= 6'h01 && OpCode <= 6'h07 && OpCode != 6'h03)
+		else if(Instruct == 32'h0000_0000 || OpCode == 6'h2b || (OpCode == 6'h00 && Funct == 6'h08) || (OpCode >= 6'h01 && OpCode <= 6'h07 && OpCode != 6'h03))
 			RegWr <= 0;
 		else
 			RegWr <= 1;
@@ -108,11 +108,11 @@ module Control (Instruct, IRQ, PC31,
 			endcase
 
 	assign ALUSrc1 = (OpCode == 6'h00 && (Funct == 6'h00 || Funct == 6'h02 || Funct == 6'h03))? 1 : 0;
-	assign ALUSrc2 = (OpCode >= 6'h08)? 1 : 0;
-	assign Sign = (OpCode == 6'h0b)? 0 : 1;
-	assign MemWr = (OpCode == 6'h2b)? 1 : 0;
-	assign MemRd = (OpCode == 6'h23)? 1 : 0;
-	assign ExtOp = (OpCode == 6'h0c)? 0 : 1;
-	assign LUOp = (OpCode == 6'h0f)? 1 : 0;
+	assign ALUSrc2 = (OpCode >= 6'h08) ? 1 : 0;
+	assign Sign = (OpCode == 6'h0b) ? 0 : 1;
+	assign MemWr = (OpCode == 6'h2b) ? 1 : 0;
+	assign MemRd = (OpCode == 6'h23) ? 1 : 0;
+	assign ExtOp = (OpCode == 6'h0c) ? 0 : 1;
+	assign LUOp = (OpCode == 6'h0f) ? 1 : 0;
 
 endmodule

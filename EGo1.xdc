@@ -20,10 +20,10 @@ set_property -dict {PACKAGE_PIN B2 IOSTANDARD LVCMOS33} [get_ports {digi[6]}]
 set_property -dict {PACKAGE_PIN D5 IOSTANDARD LVCMOS33} [get_ports {digi[7]}]
 
 # enable signal for specific digital tube
-set_property -dict {PACKAGE_PIN H1 IOSTANDARD LVCMOS33} [get_ports {digi[11]}]
-set_property -dict {PACKAGE_PIN C1 IOSTANDARD LVCMOS33} [get_ports {digi[10]}]
-set_property -dict {PACKAGE_PIN C2 IOSTANDARD LVCMOS33} [get_ports {digi[9]}]
-set_property -dict {PACKAGE_PIN G2 IOSTANDARD LVCMOS33} [get_ports {digi[8]}]
+set_property -dict {PACKAGE_PIN C2 IOSTANDARD LVCMOS33} [get_ports {digi[11]}]
+set_property -dict {PACKAGE_PIN G2 IOSTANDARD LVCMOS33} [get_ports {digi[10]}]
+set_property -dict {PACKAGE_PIN H1 IOSTANDARD LVCMOS33} [get_ports {digi[9]}]
+set_property -dict {PACKAGE_PIN C1 IOSTANDARD LVCMOS33} [get_ports {digi[8]}]
 
 # leds
 set_property -dict {PACKAGE_PIN K2 IOSTANDARD LVCMOS33} [get_ports {led[0]}]
