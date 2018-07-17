@@ -65,7 +65,7 @@ reg [31:0] ID_EX_DATA2;
 reg [31:0] ID_EX_PC;
 reg [31:0] ID_EX_Imm32;
 reg [31:0] ID_EX_ConBA;
-reg [1:0] ID_EX_PCSrc;
+reg [2:0] ID_EX_PCSrc;
 reg [4:0] ID_EX_Shamt;
 reg [4:0] ID_EX_Rs;
 reg [4:0] ID_EX_Rt;
@@ -90,6 +90,7 @@ reg [31:0] EX_MEM_DATA2;
 reg [31:0] EX_MEM_ALUOut;
 reg [4:0] EX_MEM_Rc;
 reg [1:0] EX_MEM_MemToReg;
+reg [31:0] EX_MEM_ConBA;
 // reg in MEM/WB
 reg MEM_WB_RegWr;
 //reg [31:0] MEM_WB_PC4;
@@ -117,7 +118,7 @@ always @(posedge clk or negedge reset) begin
     end
 end
 
-ROM_without_UART instruction_memory(.addr(PC[30:0]), .data(Instruction));
+ROM instruction_memory(.addr(PC[30:0]), .data(Instruction));
 // IF/ID
 always @(posedge clk or negedge reset) begin
     if(~reset) begin
@@ -198,7 +199,7 @@ always @(posedge clk or negedge reset) begin
                         && (ID_EX_Rc != Rt || ~ID_EX_RegWr))? DataBusC:
                         (ID_EX_RegWr && (ID_EX_Rc != 5'd0) && (ID_EX_Rc == Rt)) ? ALUOut:
                         (MEM_WB_RegWr && (MEM_WB_Rc != 5'd0) && (MEM_WB_Rc == Rt)) ? MEM_WB_DataBusC:DataBusB;
-        ID_EX_PC <= (ID_EX_jump == 1) ? ID_EX_jump_addr:IF_ID_PC;
+        ID_EX_PC <= (ID_EX_jump == 1) ? ID_EX_jump_addr:((IF_ID_Instruction[31:26] == 6'b000011)?IF_ID_PC4:((branch)?ID_EX_ConBA:(EX_MEM_branch)?EX_MEM_ConBA:IF_ID_PC));
         ID_EX_Imm32 <= LUOp ? {Imm16, 16'd0}:Imm32;
         ID_EX_ConBA <= ConBA;
         ID_EX_PCSrc <= PCSrc;
@@ -251,28 +252,31 @@ always @(posedge clk or negedge reset) begin
         EX_MEM_ALUOut <= 32'd0;
         EX_MEM_Rc <= 5'd0;
         EX_MEM_MemToReg <= 2'd0;
+        EX_MEM_ConBA <= 31'd0;
     end
     else begin
         EX_MEM_RegWr <= ID_EX_RegWr;
         EX_MEM_MemWr <= ID_EX_MemWr;
         EX_MEM_MemRd <= ID_EX_MemRd;
+        EX_MEM_branch <= branch;
         EX_MEM_PC <= ID_EX_PC;
         EX_MEM_DATA2 <= ID_EX_DATA2;
         EX_MEM_ALUOut <= ALUOut;
         EX_MEM_Rc <= ID_EX_Rc;
         EX_MEM_MemToReg <= ID_EX_MemToReg;
+        EX_MEM_ConBA <= ID_EX_ConBA;
     end
 end
 // MEM
 DataMem datamem(.reset(reset), .clk(clk), .rd(EX_MEM_MemRd), .wr(EX_MEM_MemWr), .addr(EX_MEM_ALUOut), .wdata(EX_MEM_DATA2), .rdata(DataMemOut));
-Peripheral peripheral_pipe(.reset(reset), .clk(clk), .rd(EX_MEM_MemRd), .wr(EX_MEM_MemWr), .addr(EX_MEM_ALUOut),
+Peripheral peripheral_pipe(.sysclk(sysclk), .reset(reset), .clk(clk), .rd(EX_MEM_MemRd), .wr(EX_MEM_MemWr), .addr(EX_MEM_ALUOut),
                      .wdata(EX_MEM_DATA2), .rdata(PeripheralOut), .led(led), .switch(switch), .digi(digi), 
                      .irqout(IRQ), .PC_Uart_rxd(UART_RX), .PC_Uart_txd(UART_TX));
 
 assign MemOut = EX_MEM_ALUOut[30] ? PeripheralOut : DataMemOut;
 assign DataBusC = (EX_MEM_MemToReg == 2'd0)? EX_MEM_ALUOut :
                 (EX_MEM_MemToReg == 2'd1)? MemOut :
-                (EX_MEM_MemToReg == 2'd2)? EX_MEM_PC +3'd4 : EX_MEM_PC;
+                (EX_MEM_MemToReg == 2'd2)? EX_MEM_PC : EX_MEM_PC;
 
 // MEM/WB
 always @(posedge clk or negedge reset) begin
