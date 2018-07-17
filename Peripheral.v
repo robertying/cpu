@@ -69,10 +69,10 @@ always @(negedge reset or posedge clk) begin
 
 		// Set flags to true when finished sending or receiving
 		if (~rx_status)
-			count = 0;
+			count <= 0;
 		if (rx_status && ~count) begin
-			rx_flag = 1;
-			count = 1;
+			rx_flag <= 1;
+			count <= 1;
 		end
 		if(tx_status)
 			tx_flag <= 1;
@@ -84,7 +84,7 @@ always @(negedge reset or posedge clk) begin
 			tx_flag <= 0;
 
 		// Only send once
-		if (tx_enable == 1) tx_enable = 0;
+		if (tx_enable == 1) tx_enable <= 0;
 	end
 end
 
