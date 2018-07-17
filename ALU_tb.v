@@ -1,5 +1,6 @@
-`timescale 1 ns / 1 ns
-module test();
+`timescale 1ns/1ns
+
+module ALU_tb();
 reg sign;
 reg [5:0] alufun;
 reg [31:0] a, b;
@@ -78,7 +79,7 @@ initial begin
 	#5 b = 32'hf111111f;
 	#3 b = 32'hf111111f;
 	#2 b = 32'h0111111f;
-		
+
 	#3 b = 32'hf111111f;
 	#2 b = 32'hf1111110;
 	#3 b = 32'hf111111f;

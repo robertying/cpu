@@ -26,7 +26,7 @@ bin_to_hex = {"0000":"0", "0001":"1", "0010":"2", "0011":"3", "0100":"4", "0101"
 
 def Bin_to_Hex(bincode):
     hexcode = ""
-    num = 0;
+    num = 0
     while num != 32:
         hexcode = hexcode + bin_to_hex[bincode[num:num+4]]
         num = num + 4

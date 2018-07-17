@@ -17,7 +17,7 @@ module Control (Instruct, IRQ, PC31,
 	output reg [1:0] MemToReg;
 	output ExtOp;
 	output LUOp;
-    
+
 	wire [5:0] OpCode;
 	wire [5:0] Funct;
 	wire IRQ_valid;
@@ -28,8 +28,8 @@ module Control (Instruct, IRQ, PC31,
 	assign IRQ_valid = IRQ & (~PC31);
 	assign Undefine = PC31 ? 0 :
 			~((OpCode >= 6'h00 && OpCode <= 6'h0c) || OpCode == 6'h0f || OpCode == 6'h23 || OpCode == 6'h2b) ? 1 :
-			((OpCode != 0) || ((OpCode == 0) && (Funct[5:3] >= 3'b100 || Funct == 6'h00 || Funct == 6'h02 || Funct == 6'h03 || Funct == 6'h08 || Funct == 6'h09 || Funct == 6'h2a))) ? 0 : 1; 
-	// PCSrc 
+			((OpCode != 0) || ((OpCode == 0) && (Funct[5:3] >= 3'b100 || Funct == 6'h00 || Funct == 6'h02 || Funct == 6'h03 || Funct == 6'h08 || Funct == 6'h09 || Funct == 6'h2a))) ? 0 : 1;
+	// PCSrc
 	always @(*)
 		if(IRQ_valid)
 			PCSrc <= 3'd4;

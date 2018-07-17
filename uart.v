@@ -1,4 +1,4 @@
-module uart(
+module UART(
     input sysclk,
     input [7:0] tx_data,
     output [7:0] rx_data,
@@ -43,12 +43,12 @@ module uart(
     end
 
     // modules
-    rx _rx(PC_Uart_rxd, baudx16_clk, rx_enable, rx_status, rx_data);
-    tx _tx(baudx16_clk, tx_data, tx_enable_hold, tx_status, PC_Uart_txd);
+    Rx rx(PC_Uart_rxd, baudx16_clk, rx_enable, rx_status, rx_data);
+    Tx tx(baudx16_clk, tx_data, tx_enable_hold, tx_status, PC_Uart_txd);
 
 endmodule
 
-module rx (
+module Rx (
     input rx_in,
     input clk,
     input rx_enable,
@@ -112,7 +112,7 @@ module rx (
 
 endmodule
 
-module tx(
+module Tx(
     input clk,
     input [7:0] tx_data,
     input tx_enable,

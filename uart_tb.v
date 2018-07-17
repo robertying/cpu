@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module uart_tb();
+module UART_tb();
     reg sysclk, clk, reset, rd, wr, PC_Uart_rxd;
     wire irqout, PC_Uart_txd;
     reg [31:0] addr, wdata;
@@ -9,7 +9,7 @@ module uart_tb();
     wire [31:0] rdata;
     wire [11:0] digi;
 
-    Peripheral _peripheral(sysclk,
+    Peripheral peripheral(sysclk,
                             reset,
                             clk,
                             rd,

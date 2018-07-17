@@ -26,7 +26,7 @@ timer:
 	# $v0 = 0
 	add	$v0,	$0,	$0
 
-#=======GET FIRST NUMBER=======#  
+#=======GET FIRST NUMBER=======#
 UART_receiver1:
 	# $t0 = 0x4000_0020 = UART_CON
 	lw	$t0,	32($s0)
@@ -35,10 +35,10 @@ UART_receiver1:
 	beq	$t1,	$0,	UART_receiver1
 	# $a0 = 0x4000_001c = UART_RXD
 	lw	$a0,	28($s0)
-	
+
 	add	$a2,	$0,	$a0
 
-#=======GET SECOND NUMBER=======#  
+#=======GET SECOND NUMBER=======#
 UART_receiver2:
 	# $t0 = 0x4000_0020 = UART_CON
 	lw 	$t0,	32($s0)
@@ -46,11 +46,11 @@ UART_receiver2:
 	and	$t1,	$t0,	$s1
 	beq	$t1,	$0,	UART_receiver2
 	# $a1 = 0x4000_001c = UART_RXD
-	lw	$a1,	28($s0) 
-		
+	lw	$a1,	28($s0)
+
 	add	$a3,	$0,	$a1
 	j	judge
-	
+
 #=======GET GCD=======#
 div:
 	sub	$t1,	$a0,	$a1
@@ -71,7 +71,7 @@ UART_sender:
 	sw	$v0,	12($s0)
 	# write to UART_TXD
 	sw	$v0,	24($s0)
-	
+
 #=======ENDLESS LOOP=======#
 forever_loop:
 	j	forever_loop
@@ -94,14 +94,14 @@ interrupt:
 	and	$t5,	$t5,	$t6
 	# TCON[2:1] = 2'b0
 	sw	$t5,	8($s7)
-	
+
 	# $t5 = 0x4000_0014 = digi
 	lw	$t5,	20($s7)
 	# $s6 = {20'h0, BCD[11:8], 8'h00}
 	andi	$s6,	$t5,	0x0F00
 	# $t6 = 0x0000_0100
 	addi	$t6,	$0,	0x100
-	
+
 #=======SWITCH-CASE BLOCK=======#
 	beq	$s6,	$0,	one_high
 	beq	$s6,	$t6,	one_low

@@ -145,7 +145,7 @@ end
 // ID
 Control control(.Instruct(IF_ID_Instruction), .IRQ(IRQ), .PC31(IF_ID_PC4[31]),
 				.PCSrc(PCSrc), .RegDst(RegDst), .RegWr(RegWr), .ALUSrc1(ALUSrc1), .ALUSrc2(ALUSrc2),
-				.ALUFun(ALUFun), .Sign(Sign), .MemWr(MemWr), .MemRd(MemRd), .MemToReg(MemToReg), 
+				.ALUFun(ALUFun), .Sign(Sign), .MemWr(MemWr), .MemRd(MemRd), .MemToReg(MemToReg),
 				.ExtOp(ExtOp), .LUOp(LUOp));
 
 assign JT = IF_ID_Instruction[25:0];
@@ -203,7 +203,7 @@ always @(posedge clk or negedge reset) begin
         ID_EX_Imm32 <= LUOp ? {Imm16, 16'd0}:Imm32;
         ID_EX_ConBA <= ConBA;
         ID_EX_PCSrc <= PCSrc;
-        ID_EX_Shamt <= Shamt; 
+        ID_EX_Shamt <= Shamt;
         ID_EX_Rs <= Rs;
         ID_EX_Rt <= Rt;
         if((load_use || branch) && ~xadr && ~illop) begin
@@ -270,7 +270,7 @@ end
 // MEM
 DataMem datamem(.reset(reset), .clk(clk), .rd(EX_MEM_MemRd), .wr(EX_MEM_MemWr), .addr(EX_MEM_ALUOut), .wdata(EX_MEM_DATA2), .rdata(DataMemOut));
 Peripheral peripheral_pipe(.sysclk(sysclk), .reset(reset), .clk(clk), .rd(EX_MEM_MemRd), .wr(EX_MEM_MemWr), .addr(EX_MEM_ALUOut),
-                     .wdata(EX_MEM_DATA2), .rdata(PeripheralOut), .led(led), .switch(switch), .digi(digi), 
+                     .wdata(EX_MEM_DATA2), .rdata(PeripheralOut), .led(led), .switch(switch), .digi(digi),
                      .irqout(IRQ), .PC_Uart_rxd(UART_RX), .PC_Uart_txd(UART_TX));
 
 assign MemOut = EX_MEM_ALUOut[30] ? PeripheralOut : DataMemOut;

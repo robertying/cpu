@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module ROM_without_peripheral (addr,data);
 input [30:0] addr;
 output [31:0] data;

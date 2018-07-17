@@ -24,7 +24,7 @@ reg tx_enable, rx_enable, tx_flag, rx_flag;
 wire tx_status, rx_status;
 
 // UART
-uart _uart(sysclk, tx_data, rx_data, tx_enable, rx_enable, tx_status, rx_status, PC_Uart_rxd, PC_Uart_txd);
+UART uart(sysclk, tx_data, rx_data, tx_enable, rx_enable, tx_status, rx_status, PC_Uart_rxd, PC_Uart_txd);
 
 // Interruption signal
 assign irqout = TCON[2];

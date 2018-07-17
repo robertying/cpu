@@ -1,20 +1,19 @@
-
 module ALU (A, B, ALUFun, Sign, OUT);
 	input [31:0] A, B;
 	input [5:0] ALUFun;
 	input Sign;
 	output reg [31:0] OUT;
-	
+
 
 	wire [31:0] OUT_00;
 	reg OUT_11;
 	reg [31:0] OUT_01;
 	reg [31:0] OUT_10;
-	
+
 	wire nonzero;
 	reg negative;
 	reg compare_zero;
-	
+
 	wire [31:0] B_left_1;
 	wire [31:0] B_left_2;
 	wire [31:0] B_left_4;
@@ -34,14 +33,14 @@ module ALU (A, B, ALUFun, Sign, OUT);
 	assign OUT_00 = A + (ALUFun[0]? (~B) + 32'h00000001: B);
 
 	assign nonzero = | OUT_00;
-	
+
 	always @(*)
 		case ({A[31], B[31]})
 			2'b10: negative <= Sign;
 			2'b01: negative <= ~Sign;
 			default: negative <= OUT_00[31];
 		endcase
-	
+
 	always @(*)
 	 	case ({ALUFun[2], Sign})
 			2'b11: compare_zero <= A[31] | ~(|A);

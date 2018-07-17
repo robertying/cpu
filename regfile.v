@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module RegFile (reset, clk, addr1, data1, addr2, data2, wr, addr3, data3);
 input reset, clk;
 input wr;
@@ -15,7 +13,7 @@ assign data2 = (addr2 == 5'b0) ? 32'b0 : RF_DATA[addr2];
 
 always @(negedge reset or posedge clk) begin
 	if(~reset) begin // $sp should be initialized as 32'h0000_0100
-		for(i = 1; i < 32; i = i + 1) 
+		for(i = 1; i < 32; i = i + 1)
 			RF_DATA[i] <= 32'b0;
 		RF_DATA[29] <= 32'h0000_0400;
 	end
