@@ -33,6 +33,8 @@ wire [31:0] ALU_In_A;
 wire [31:0] ALU_In_B;
 wire [31:0] ALUOut;
 wire [31:0] MemOut;
+wire [31:0] DataMemOut;
+wire [31:0] PeripheralOut;
 wire [31:0] Imm32;
 // signals from control
 wire [2:0] PCSrc;
@@ -68,6 +70,7 @@ reg [4:0] ID_EX_Shamt;
 reg [4:0] ID_EX_Rs;
 reg [4:0] ID_EX_Rt;
 reg [4:0] ID_EX_Rc;
+reg [31:0] ID_EX_jump_addr;
 reg ID_EX_RegWr;
 reg ID_EX_ALUSrc1;
 reg ID_EX_ALUSrc2;
@@ -76,6 +79,7 @@ reg ID_EX_MemWr;
 reg ID_EX_MemRd;
 reg [1:0] ID_EX_MemToReg;
 reg [5:0] ID_EX_ALUFun;
+reg ID_EX_jump;
 // reg in EX/MEM
 reg EX_MEM_RegWr;
 reg EX_MEM_MemWr;
@@ -155,7 +159,7 @@ assign Rc = (RegDst == 2'b00)? Rd:
     		(RegDst == 2'b10)? 5'd31:
 		    (RegDst == 2'b11)? 5'd26:5'd0;
 assign ConBA = {Imm32[29:0], 2'd0} + IF_ID_PC4;
-assign load_use = (ID_EX_MemRd && (ID_EX_Rs == Rs || ID_EX_Rt == Rt));
+assign load_use = (ID_EX_MemRd && (ID_EX_Rt == Rs || ID_EX_Rt == Rt));
 assign jump = (PCSrc == 3'd2);
 assign jump_reg = (PCSrc == 3'd3);
 assign illop = (PCSrc == 3'd4);
@@ -194,7 +198,7 @@ always @(posedge clk or negedge reset) begin
                         && (ID_EX_Rc != Rt || ~ID_EX_RegWr))? DataBusC:
                         (ID_EX_RegWr && (ID_EX_Rc != 5'd0) && (ID_EX_Rc == Rt)) ? ALUOut:
                         (MEM_WB_RegWr && (MEM_WB_Rc != 5'd0) && (MEM_WB_Rc == Rt)) ? MEM_WB_DataBusC:DataBusB;
-        ID_EX_PC <= IF_ID_PC;
+        ID_EX_PC <= (ID_EX_jump == 1) ? ID_EX_jump_addr:IF_ID_PC;
         ID_EX_Imm32 <= LUOp ? {Imm16, 16'd0}:Imm32;
         ID_EX_ConBA <= ConBA;
         ID_EX_PCSrc <= PCSrc;
@@ -211,6 +215,8 @@ always @(posedge clk or negedge reset) begin
             ID_EX_MemRd <= 0;
             ID_EX_MemToReg <= 2'd0;
             ID_EX_ALUFun <= 5'd0;
+            ID_EX_jump <= 0;
+            ID_EX_jump_addr <= 32'd0;
         end
         else begin
             ID_EX_Rc <= Rc;
@@ -222,6 +228,8 @@ always @(posedge clk or negedge reset) begin
             ID_EX_MemRd <= MemRd;
             ID_EX_MemToReg <= MemToReg;
             ID_EX_ALUFun <= ALUFun;
+            ID_EX_jump <= jump;
+            ID_EX_jump_addr <= {IF_ID_Instruction[31:28], JT, 2'b00};
         end
     end
 end
@@ -257,7 +265,7 @@ always @(posedge clk or negedge reset) begin
 end
 // MEM
 DataMem datamem(.reset(reset), .clk(clk), .rd(EX_MEM_MemRd), .wr(EX_MEM_MemWr), .addr(EX_MEM_ALUOut), .wdata(EX_MEM_DATA2), .rdata(DataMemOut));
-peripheral peripheral_pipe(.reset(reset), .clk(clk), .rd(EX_MEM_MemRd), .wr(EX_MEM_MemWr), .addr(EX_MEM_ALUOut),
+Peripheral peripheral_pipe(.reset(reset), .clk(clk), .rd(EX_MEM_MemRd), .wr(EX_MEM_MemWr), .addr(EX_MEM_ALUOut),
                      .wdata(EX_MEM_DATA2), .rdata(PeripheralOut), .led(led), .switch(switch), .digi(digi), 
                      .irqout(IRQ), .PC_Uart_rxd(UART_RX), .PC_Uart_txd(UART_TX));
 
