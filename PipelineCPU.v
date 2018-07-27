@@ -99,49 +99,49 @@ reg [4:0] MEM_WB_Rc;
 // IF
 assign PC_plus_4 = PC + 3'd4;
 
+wire [31:0] PC_next;
+assign PC_next = (illop && ~branch) ? ILLOP :
+                 (xadr && ~branch) ? XADR :
+                 load_use ? PC :
+                 branch ? ID_EX_ConBA :
+                 jump ? {IF_ID_PC4[31:28], JT, 2'b00} :
+                 jump_reg ? DataBusA : PC_plus_4;
+
 always @(posedge clk or negedge reset) begin
     if(~reset)
         PC <= 32'd0;
-    else if(illop && ~branch)
-        PC <= ILLOP;
-    else if(xadr && ~branch)
-        PC <= XADR;
-    else if(~load_use) begin
-        if(branch)
-            PC <= ID_EX_ConBA;
-        else if(jump)
-            PC <= {IF_ID_PC4[31:28], JT, 2'b00};
-        else if(jump_reg)
-            PC <= DataBusA;
-        else
-            PC <= PC_plus_4;
-    end
+    else
+        PC <= PC_next;
 end
 
 ROM instruction_memory(.addr(PC[30:0]), .data(Instruction));
+
 // IF/ID
+wire [31:0] IF_ID_Instruction_next;
+wire [31:0] IF_ID_PC_next;
+wire [31:0] IF_ID_PC4_next;
+assign IF_ID_Instruction_next = (illop ||xadr || branch || jump ||jump_reg) ? 32'd0 :
+                                ~load_use ? Instruction : IF_ID_Instruction;
+assign IF_ID_PC_next = (illop || xadr) ? 32'h8000_0000 :
+                       (branch || jump || jump_reg) ? {IF_ID_PC[31], 31'd0} :
+                       (~load_use) ? PC : IF_ID_PC;
+assign IF_ID_PC4_next = (illop || xadr) ? 32'h8000_0000 :
+                       (branch || jump || jump_reg) ? {IF_ID_PC4[31], 31'd0} :
+                       (~load_use) ? PC_plus_4 : IF_ID_PC4;
+
 always @(posedge clk or negedge reset) begin
     if(~reset) begin
         IF_ID_Instruction <= 32'd0;
         IF_ID_PC <= 32'd0;
         IF_ID_PC4 <= 32'd0;
     end
-    else if(illop || xadr) begin
-        IF_ID_Instruction <= 32'd0;
-        IF_ID_PC <= 32'h8000_0000;
-        IF_ID_PC4 <= 32'h8000_0000;
-    end
-    else if(branch || jump || jump_reg) begin
-        IF_ID_Instruction <= 32'd0;
-        IF_ID_PC <= {IF_ID_PC[31], 31'd0};
-        IF_ID_PC4 <= {IF_ID_PC4[31], 31'd0};
-    end
-    else if(~load_use) begin
-        IF_ID_Instruction <= Instruction;
-        IF_ID_PC <= PC;
-        IF_ID_PC4 <= PC_plus_4;
+    else begin
+        IF_ID_Instruction <= IF_ID_Instruction_next;
+        IF_ID_PC <= IF_ID_PC_next;
+        IF_ID_PC4 <= IF_ID_PC4_next;
     end
 end
+
 // ID
 Control control(.Instruct(IF_ID_Instruction), .IRQ(IRQ), .PC31(IF_ID_PC4[31]),
 				.PCSrc(PCSrc), .RegDst(RegDst), .RegWr(RegWr), .ALUSrc1(ALUSrc1), .ALUSrc2(ALUSrc2),
