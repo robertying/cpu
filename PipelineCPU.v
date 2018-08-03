@@ -114,7 +114,7 @@ always @(posedge clk or negedge reset) begin
         PC <= PC_next;
 end
 
-ROM instruction_memory(.addr(PC[30:0]), .data(Instruction));
+ROM_without_UART instruction_memory(.addr(PC[30:0]), .data(Instruction));
 
 // IF/ID
 wire [31:0] IF_ID_Instruction_next;

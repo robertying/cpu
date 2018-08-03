@@ -80,8 +80,6 @@ always @(negedge reset or posedge clk) begin
 		//  Set flags to false when data is read
 		if(rd && (addr == 32'h4000001C))
 			rx_flag <= 0;
-		if(rd && (addr == 32'h4000001C))
-			tx_flag <= 0;
 
 		// Only send once
 		if (tx_enable == 1) tx_enable <= 0;
